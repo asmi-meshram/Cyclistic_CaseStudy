@@ -1,0 +1,253 @@
+---
+title: "Cyclistic - Bike Share Case Study"
+author: "Asmita Meshram"
+date: "25/05/2021"
+output: html_document
+---
+
+
+### A Capstone Project for Google Data Analytics Professional Certification
+
+
+## Business Task:
+
+Understand how casual riders and annual members of Cyclistic - Bike Share use Cyclistic bikes differently and come up with efficient recommendations to convert casual riders into annual members
+
+
+
+## Stakeholders
+
+1. Lily Moreno - Director of Marketing
+
+2. Cyclistic marketing analytics team
+
+3. Cyclistic executive team
+
+
+## Ask Phase of Data Analysis
+
+As it is clear that we want to convert casual members into annual members, we can come up with these SMART questions -
+
+1. How do annual members and casual riders use Cyclistic bikes differently?
+
+2. Why would casual riders buy Cyclistic annual memberships?
+
+3. How can Cyclistic use digital media to influence casual riders to become members?
+
+
+## Preparing Our Data
+
+The data set we'll use can be downloaded from [here](https://divvy-tripdata.s3.amazonaws.com/index.html). This dataset is publically available under this [license](https://www.divvybikes.com/data-license-agreement)
+
+
+
+##### Installing the required libraries in R
+
+```{r installing libraries}
+# libraries are already installed using install.packages()
+```
+
+
+```{r loading installed libraries}
+library("tidyverse")
+library("lubridate")
+library("ggplot2")
+```
+
+
+```{r setting up working directory}
+getwd()
+```
+
+
+#### Uploading the datasets
+
+```{r importing datsets}
+data_may20 <- read_csv("DataSet/Clean_ds_null_removed/202005-divvy-tripdata.csv")
+data_jun20 <- read_csv("DataSet/Clean_ds_null_removed/202006-divvy-tripdata.csv")
+data_jul20 <- read_csv("DataSet/Clean_ds_null_removed/202007-divvy-tripdata.csv")
+data_aug20 <- read_csv("DataSet/Clean_ds_null_removed/202008-divvy-tripdata.csv")
+data_sep20 <- read_csv("DataSet/Clean_ds_null_removed/202009-divvy-tripdata.csv")
+data_oct20 <- read_csv("DataSet/Clean_ds_null_removed/202010-divvy-tripdata.csv")
+data_nov20 <- read_csv("DataSet/Clean_ds_null_removed/202011-divvy-tripdata.csv")
+data_dec20 <- read_csv("DataSet/Clean_ds_null_removed/202012-divvy-tripdata.csv")
+data_jan21 <- read_csv("DataSet/Clean_ds_null_removed/202101-divvy-tripdata.csv")
+data_feb21 <- read_csv("DataSet/Clean_ds_null_removed/202102-divvy-tripdata.csv")
+data_mar21 <- read_csv("DataSet/Clean_ds_null_removed/202103-divvy-tripdata.csv")
+data_apr21 <- read_csv("DataSet/Clean_ds_null_removed/202104-divvy-tripdata.csv")
+```
+
+
+## Processing and Cleaning the datasets
+
+
+#### Inspecting dataframes
+
+```{r }
+str(data_may20)
+str(data_jun20)
+str(data_jul20)
+str(data_aug20)
+str(data_sep20)
+str(data_oct20)
+str(data_nov20)
+str(data_dec20)
+str(data_jan21)
+str(data_feb21)
+str(data_mar21)
+str(data_apr21)
+```
+
+
+We can see in column specifications that start_station_id and end_station_id does not have consistent datatype. So we will change it to character datatype
+
+
+```{r mutate cols}
+data_may20 <-  mutate(data_may20, start_station_id = as.character(start_station_id)
+                      ,end_station_id = as.character(end_station_id)) 
+data_jun20 <-  mutate(data_jun20, start_station_id = as.character(start_station_id)
+                      ,end_station_id = as.character(end_station_id)) 
+data_jul20 <-  mutate(data_jul20, start_station_id = as.character(start_station_id)
+                      ,end_station_id = as.character(end_station_id)) 
+data_aug20 <-  mutate(data_aug20, start_station_id = as.character(start_station_id)
+                      ,end_station_id = as.character(end_station_id)) 
+data_sep20 <-  mutate(data_sep20, start_station_id = as.character(start_station_id)
+                      ,end_station_id = as.character(end_station_id)) 
+data_oct20 <-  mutate(data_oct20, start_station_id = as.character(start_station_id)
+                      ,end_station_id = as.character(end_station_id))
+data_nov20 <-  mutate(data_nov20, start_station_id = as.character(start_station_id)
+                      ,end_station_id = as.character(end_station_id)) 
+data_dec20 <-  mutate(data_dec20, start_station_id = as.character(start_station_id)
+                      ,end_station_id = as.character(end_station_id)) 
+data_jan21 <-  mutate(data_jan21, start_station_id = as.character(start_station_id)
+                      ,end_station_id = as.character(end_station_id))
+data_feb21 <-  mutate(data_feb21, start_station_id = as.character(start_station_id)
+                      ,end_station_id = as.character(end_station_id)) 
+data_mar21 <-  mutate(data_mar21, start_station_id = as.character(start_station_id)
+                      ,end_station_id = as.character(end_station_id)) 
+data_apr21 <-  mutate(data_apr21, start_station_id = as.character(start_station_id)
+                      ,end_station_id = as.character(end_station_id))
+```
+
+
+#### Combining all datasets into a single dataset
+
+```{r binding datasets}
+trips <- bind_rows(data_may20,data_jun20,data_jul20,data_aug20,data_sep20,data_oct20,data_nov20,data_dec20,data_jan21,data_feb21,data_mar21,data_apr21)
+```
+
+
+Longitude and latitude columns can be dropped as there is no need of them
+
+```{r dropping unwanted cols}
+
+trips <- trips %>%
+  select(-c(start_lat,start_lng,end_lat,end_lng))
+```
+
+
+### Formatting data for our convenience
+
+```{r adding date, month and year col}
+trips$date <- as.Date(trips$started_at, "%d-%m-%Y")
+
+trips$month <- format(as.Date(trips$date),"%m")
+
+trips$day <- format(as.Date(trips$date),"%d")
+
+trips$year <- format(as.Date(trips$date), "%Y")
+```
+
+
+#### Summarizing data for analysis
+
+```{r summarise data}
+colnames(trips)
+
+nrow(trips)
+
+dim(trips)
+
+head(trips)
+
+str(trips)
+
+summary(trips)
+```
+
+
+The ride_length cannot be summarized as it is in HH:MM:SS format. so let's convert it to numeric representing seconds only
+
+```{r ride length in sec}
+trips$ride_length <- hms(trips$ride_length)
+trips$ride_length <- as.numeric(trips$ride_length)
+```
+
+```{r renaming ride_length}
+
+(trips <- rename(trips,
+                 ride_length_in_sec = ride_length))
+```
+
+
+
+
+## Analyse Phase
+
+
+```{r summarizing}
+mean(trips$ride_length_in_sec)
+
+median(trips$ride_length_in_sec)
+
+max(trips$ride_length_in_sec)
+
+min(trips$ride_length_in_sec)
+
+```
+
+
+```{r aggregate}
+aggregate(trips$ride_length_in_sec ~ trips$member_casual, FUN = mean)
+
+aggregate(trips$ride_length_in_sec ~ trips$member_casual, FUN = median)
+
+aggregate(trips$ride_length_in_sec ~ trips$member_casual, FUN = max)
+
+aggregate(trips$ride_length_in_sec ~ trips$member_casual, FUN = min)
+
+
+aggregate(trips$ride_length_in_sec ~ trips$member_casual + trips$day_of_week, FUN = mean)
+
+```
+
+
+```{r quick summary}
+
+
+trips %>%
+  mutate(weekday = wday(started_at, label = TRUE)) %>%
+  group_by(member_casual,weekday) %>%
+  summarise(number_of_rides = n(), average_duration = mean(ride_length_in_sec)) %>%
+  arrange(member_casual, weekday)
+```
+
+
+
+## Plotting our data
+
+```{r plot}
+trips %>%
+  group_by(member_casual, day_of_week) %>%
+  summarise(number_of_rides = n(), average_duration = mean(ride_length_in_sec)) %>%
+  arrange(member_casual, day_of_week) %>%
+  ggplot(aes(x = day_of_week, y = average_duration, fill = member_casual)) +
+  geom_col(position = "dodge")
+```
+
+##### Export data for further Analysis
+
+```{r}
+agg_data = aggregate(trips$ride_length_in_sec ~ trips$member_casual + trips$day_of_week, FUN = mean)
+# write.csv(agg_data, file = 'D:\\Main Folder\\Google Data Analytics Course\\CaseStudy\\Cyclistic_Case_Study\\DataSet\\agg_data.csv')
+```
