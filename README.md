@@ -1,6 +1,8 @@
 # Cyclistic_CaseStudy
 A Capstone project for Google Data Analytics Professional Certification
 
+Open the PDF file to view the Case Study Report
+
 Tableau Dashboard:
 
 https://public.tableau.com/app/profile/asmita.meshram3730/viz/RidersofCyclistic-BikeShare/Dashboard1
