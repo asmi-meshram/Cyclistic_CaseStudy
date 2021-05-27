@@ -1,6 +1,12 @@
 # Cyclistic_CaseStudy
 A Capstone project for Google Data Analytics Professional Certification
 
+Tableau Dashboard:
+
+https://public.tableau.com/app/profile/asmita.meshram3730/viz/RidersofCyclistic-BikeShare/Dashboard1
+
+Analysis Report on Rpubs:
+
 http://rpubs.com/asmi_9/Cyclistic_CaseStudy
 
 
